@@ -1,0 +1,23 @@
+{
+    "name": "mario-deluna/php-game-framework",
+    "authors": [
+        {
+            "name": "Mario Döring",
+            "email": "mario@clancats.com"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+        	"PGF\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PGF\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
