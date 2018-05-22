@@ -94,10 +94,12 @@ class Window
 	 */
 	public function makeCurrentContext()
 	{	
-		$this->needsWindowContext();
+		if (static::$currentContext !== $this) 
+		{
+			$this->needsWindowContext();
 
-		if (static::$currentContext !== $this) {
-			glfwMakeContextCurrent($this->context); static::$currentContext = $this;
+			glfwMakeContextCurrent($this->context); 
+			static::$currentContext = $this;
 		}
 	}
 
@@ -154,5 +156,72 @@ class Window
 	{
 		$this->makeCurrentContext();
 		glfwSwapInterval($i);
+	}
+
+	/**
+	 * Clear the window with the given color
+	 *
+	 * @param int 		$r Red
+	 * @param int 		$g Green
+	 * @param int 		$b Blue
+	 * @param int 		$a Alpha
+	 */
+	public function clearColor($r, $g, $b, $a)
+	{
+		$this->makeCurrentContext();
+		glClearColor($r, $g, $b, $a);
+	}
+
+	/**
+	 * Clear the window buffer
+	 *
+	 * @param int 			$p
+	 */
+	public function clear($p)
+	{
+		$this->makeCurrentContext(); 
+		glClear($p);
+	}
+
+	/**
+	 * Should the window close?
+	 *
+	 * @return bool
+	 */
+	public function shouldClose()
+	{
+		$this->needsWindowContext();
+		return glfwWindowShouldClose($this->context);
+	}
+
+	/**
+	 * Swap the the frame buffer
+	 *
+	 * @return void
+	 */
+	public function swapBuffers()
+	{
+		$this->needsWindowContext();
+		glfwSwapBuffers($this->context);
+	}
+
+	/**
+	 * Poll the window events
+	 */
+	public function pollEvents()
+	{
+		$this->makeCurrentContext(); 
+		glfwPollEvents();
+	}
+
+	/**
+	 * Returns the current window context
+	 *
+	 * @return resource
+	 */
+	public function getContext()
+	{
+		$this->needsWindowContext();
+		return $this->context;
 	}
 }
