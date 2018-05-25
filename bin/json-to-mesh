@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+
+array_shift($argv);
+$jsonFile = array_shift($argv);
+
+if (!file_exists($jsonFile) || !is_readable($jsonFile)) {
+	die('Cannot read input file.');
+}
+
+$data = json_decode(file_get_contents($jsonFile));
+
+$j = 0;
+$buffer = "[\n";
+
+for($i=0; $i<count($data->vertices); $i+=3)
+{
+	$buffer .= "   ";
+	$buffer .= $data->vertices[$i+0] . ', ' . str_repeat(' ', 10 - strlen((string) $data->vertices[$i+0]));
+	$buffer .= $data->vertices[$i+1] . ', ' . str_repeat(' ', 10 - strlen((string) $data->vertices[$i+1]));
+	$buffer .= $data->vertices[$i+2] . ', ' . str_repeat(' ', 10 - strlen((string) $data->vertices[$i+2]));
+	$buffer .= $data->normals[$i+0] . ', ' . str_repeat(' ', 10 - strlen((string) $data->vertices[$i+0]));
+	$buffer .= $data->normals[$i+1] . ', ' . str_repeat(' ', 10 - strlen((string) $data->vertices[$i+1]));
+	$buffer .= $data->normals[$i+2] . ', ' . str_repeat(' ', 10 - strlen((string) $data->vertices[$i+2]));
+	$buffer .= ((float)$data->uvs[$j+0]) . ', ' . str_repeat(' ', 10 - strlen((string) $data->uvs[$j+0]));
+	$buffer .= ((float)$data->uvs[$j+1]) . ', ' . str_repeat(' ', 10 - strlen((string) $data->uvs[$j+1]));
+	$buffer .= "\n";
+	$j+=2;
+}
+
+echo $buffer .= "\n];";
