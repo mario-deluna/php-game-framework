@@ -58,7 +58,7 @@ in vec2 tcoords;
 void main()
 {
     fragment_color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-} 
+}
 ");
 $shader = new Program($vertexShader, $fragmentShader);
 $shader->link();

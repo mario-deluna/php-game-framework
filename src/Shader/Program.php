@@ -29,6 +29,16 @@ class Program
 	}
 
 	/**
+	 * Returns the program id
+	 *
+	 * @return int
+	 */
+	public function id() : int
+	{
+		return $this->id;
+	}
+
+	/**
 	 * Attach a shader to the program
 	 *
 	 * @param Shader 			$shader
