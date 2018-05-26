@@ -146,6 +146,8 @@ $cube = new TexturedMesh([
 
 ]);
 
+$suzane = new TexturedMesh(require __DIR__ . '/meshes/suzane.php');
+
 /** 
  * Texture 
  */
@@ -166,6 +168,8 @@ if ($data) {
 } else {
     die('Could not load texture.');
 }
+
+//glViewport(0, 0, 800, 600);
 
 /**
  * Main loop
@@ -191,13 +195,23 @@ while (!$window->shouldClose())
     $model = glm\rotate($model, (float)glfwGetTime() * 50, new glm\vec3(0.0, 1.0, 0.0));
     $model = glm\rotate($model, (float)glfwGetTime() * 20, new glm\vec3(0.0, 0.0, 1.0));
     $view  = glm\translate($view, $cameraPos);
-    $projection = glm\perspective(45.0, (float)1000 / (float)1000, 0.1, 100.0);
+    $projection = glm\perspective(45.0, (float)800 / (float)600, 0.1, 100.0);
 
     glUniformMatrix4fv(glGetUniformLocation($shader->id(), "transform"), 1, false, glm\value_ptr($model));
     glUniformMatrix4fv(glGetUniformLocation($shader->id(), "view"), 1, false, glm\value_ptr($view));
     glUniformMatrix4fv(glGetUniformLocation($shader->id(), "projection"), 1, false, glm\value_ptr($projection));
 
     $cube->draw();
+
+    for ($i=0;$i<10;$i++)
+    {
+        $model = glm\translate($model, glm\vec3(3.0, 0.0, 0.0));
+        glUniformMatrix4fv(glGetUniformLocation($shader->id(), "transform"), 1, false, glm\value_ptr($model));
+        $suzane->draw();
+    }
+   
+
+    
 
     // swap
     $window->swapBuffers();

@@ -215,6 +215,17 @@ class Window
 	}
 
 	/**
+	 * Get the key state
+	 *
+	 * @param int 			$key
+	 */
+	public function getKeyState($key)
+	{
+		$this->needsWindowContext();
+		return glfwGetKey($this->context, $key);
+	}
+
+	/**
 	 * Returns the current window context
 	 *
 	 * @return resource
