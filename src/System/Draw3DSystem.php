@@ -85,7 +85,7 @@ class Draw3DSystem extends System
 		$this->shader->use();
 
 	    $view = new \glm\mat4();
-	    $view  = \glm\translate($view, new \glm\vec3(0.0, 0.0, -10.0));
+	    $view  = \glm\translate($view, new \glm\vec3(0.0, 0.0, glfwGetTime() * -1));
 
 	    $projection = new \glm\mat4();
 	    $projection = \glm\perspective(45.0, (float)800 / (float)600, 0.1, 100.0);
@@ -95,10 +95,14 @@ class Draw3DSystem extends System
 
 		foreach($entities as $entity)
 		{
-			if ($entity instanceof Drawable3D && $entity instanceof Transform3D) 
+			$entity->rotation->x += 1;
+			$entity->rotation->y += 1;
+
+			if ($entity instanceof Drawable3D && $entity instanceof Transform3D || 1) 
 			{
 				$model = new \glm\mat4();
 				$model = \glm\translate($model, $entity->position);
+				//var_dump($model); die;
 
 				if ($entity->rotation->x) {
 					$model = \glm\rotate($model, $entity->rotation->x, new \glm\vec3(1.0, 0.0, 0.0));
@@ -108,7 +112,7 @@ class Draw3DSystem extends System
 					$model = \glm\rotate($model, $entity->rotation->z, new \glm\vec3(0.0, 0.0, 1.0));
 				}
 
-				$model = \glm\scale($model, $entity->scale);
+				$model = \glm\scale($model, $entity->size);
 
 				// set the tranformation uniform
 	    		glUniformMatrix4fv(glGetUniformLocation($this->shader->id(), "transform"), 1, false, \glm\value_ptr($model));
