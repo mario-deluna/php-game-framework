@@ -3,16 +3,17 @@
 namespace PGF;
 
 use PGF\Entity\Entity;
+use PGF\Entity\Registry;
 use PGF\System\System;
 
 class Scene
 {
 	/**
-	 * An array of entities in this scene
+	 * An entity registry
 	 *
-	 * @var array[Entity]
+	 * @var Registry
 	 */
-	protected $entities = [];
+	public $entities;
 
 	/**
 	 * An array of systems
@@ -22,13 +23,11 @@ class Scene
 	protected $systems = [];
 
 	/**
-	 * Adds the given entity to the scene
-	 *
-	 * @param Entity 			$entity
+	 * Scene constructor
 	 */
-	public function addEntity(Entity $entity)
+	public function __construct()
 	{
-		$this->entities[] = $entity;
+		$this->entities = new Registry;
 	}
 
 	/**

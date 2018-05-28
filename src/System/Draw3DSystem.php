@@ -3,9 +3,8 @@
 namespace PGF\System;
 
 use PGF\Shader\Program;
-
 use PGF\Mesh\TexturedMesh;
-
+use PGF\Entity\Registry;
 use PGF\Entity\Traits\{
 	Drawable3D,
 	Transform3D
@@ -71,16 +70,16 @@ class Draw3DSystem extends System
 	/**
 	 * Update the given entities
 	 *
-	 * @param array 			$entities
+	 * @param Registry 			$entities
 	 */
-	public function update(array $entities) {}
+	public function update(Registry $entities) {}
 
 	/**
 	 * Draw the given entities
 	 *
-	 * @param array 			$entities
+	 * @param Registry 			$entities
 	 */
-	public function draw(array $entities)
+	public function draw(Registry $entities)
 	{
 		$this->shader->use();
 
@@ -93,33 +92,30 @@ class Draw3DSystem extends System
 	    glUniformMatrix4fv(glGetUniformLocation($this->shader->id(), "view"), 1, false, \glm\value_ptr($view));
 	    glUniformMatrix4fv(glGetUniformLocation($this->shader->id(), "projection"), 1, false, \glm\value_ptr($projection));
 
-		foreach($entities as $entity)
+		foreach($entities->fetch(Drawable3D::class, Transform3D::class) as $entity)
 		{
 			$entity->rotation->x += 1;
 			$entity->rotation->y += 1;
 
-			if ($entity instanceof Drawable3D && $entity instanceof Transform3D || 1) 
-			{
-				$model = new \glm\mat4();
-				$model = \glm\translate($model, $entity->position);
-				//var_dump($model); die;
+			$model = new \glm\mat4();
+			$model = \glm\translate($model, $entity->position);
+			//var_dump($model); die;
 
-				if ($entity->rotation->x) {
-					$model = \glm\rotate($model, $entity->rotation->x, new \glm\vec3(1.0, 0.0, 0.0));
-				} if ($entity->rotation->y) {
-					$model = \glm\rotate($model, $entity->rotation->y, new \glm\vec3(0.0, 1.0, 0.0));
-				} if ($entity->rotation->z) {
-					$model = \glm\rotate($model, $entity->rotation->z, new \glm\vec3(0.0, 0.0, 1.0));
-				}
-
-				$model = \glm\scale($model, $entity->size);
-
-				// set the tranformation uniform
-	    		glUniformMatrix4fv(glGetUniformLocation($this->shader->id(), "transform"), 1, false, \glm\value_ptr($model));
-
-	    		// load the mesh
-	    		$this->tmpMesh->draw();
+			if ($entity->rotation->x) {
+				$model = \glm\rotate($model, $entity->rotation->x, new \glm\vec3(1.0, 0.0, 0.0));
+			} if ($entity->rotation->y) {
+				$model = \glm\rotate($model, $entity->rotation->y, new \glm\vec3(0.0, 1.0, 0.0));
+			} if ($entity->rotation->z) {
+				$model = \glm\rotate($model, $entity->rotation->z, new \glm\vec3(0.0, 0.0, 1.0));
 			}
+
+			$model = \glm\scale($model, $entity->size);
+
+			// set the tranformation uniform
+    		glUniformMatrix4fv(glGetUniformLocation($this->shader->id(), "transform"), 1, false, \glm\value_ptr($model));
+
+    		// load the mesh
+    		$this->tmpMesh->draw();
 		}
 	}
 }
