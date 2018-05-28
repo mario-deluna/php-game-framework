@@ -4,6 +4,7 @@ namespace PGF\System;
 
 use PGF\Shader\Program;
 use PGF\Mesh\TexturedMesh;
+use PGF\Camera\PerspectiveCamera;
 use PGF\Entity\Registry;
 use PGF\Entity\Traits\{
 	Drawable3D,
@@ -17,16 +18,25 @@ class Draw3DSystem extends System
 	 *
 	 * @var Program
 	 */
-	protected $shader = null;
+	protected $shader;
+
+	/**
+	 * The drawers camera
+	 *
+	 * @var PerspectiveCamera
+	 */
+	protected $camera;
 
 	protected $tmpMesh;
 
 	/**
 	 * Construct
 	 */
-	public function __construct(Program $shader)
+	public function __construct(Program $shader, PerspectiveCamera $camera)
 	{
 		$this->shader = $shader;
+		$this->camera = $camera;
+
 		$this->tmpMesh = new TexturedMesh([
     1,          1,          -1,         0.577349,          0.577349,          -0.577349,         0,          0,
     -1,         -1,         -1,         -0.577349,         -0.577349,         -0.577349,         1,          1,
@@ -83,23 +93,16 @@ class Draw3DSystem extends System
 	{
 		$this->shader->use();
 
-	    $view = new \glm\mat4();
-	    $view  = \glm\translate($view, new \glm\vec3(0.0, 0.0, glfwGetTime() * -1));
-
-	    $projection = new \glm\mat4();
-	    $projection = \glm\perspective(45.0, (float)800 / (float)600, 0.1, 100.0);
-
-	    glUniformMatrix4fv(glGetUniformLocation($this->shader->id(), "view"), 1, false, \glm\value_ptr($view));
-	    glUniformMatrix4fv(glGetUniformLocation($this->shader->id(), "projection"), 1, false, \glm\value_ptr($projection));
+	    glUniformMatrix4fv(glGetUniformLocation($this->shader->id(), "view"), 1, false, \glm\value_ptr($this->camera->getViewMatrix()));
+	    glUniformMatrix4fv(glGetUniformLocation($this->shader->id(), "projection"), 1, false, \glm\value_ptr($this->camera->getProjectionMatrx()));
 
 		foreach($entities->fetch(Drawable3D::class, Transform3D::class) as $entity)
 		{
-			$entity->rotation->x += 1;
-			$entity->rotation->y += 1;
+			// $entity->rotation->x += 1;
+			// $entity->rotation->y += 1;
 
 			$model = new \glm\mat4();
 			$model = \glm\translate($model, $entity->position);
-			//var_dump($model); die;
 
 			if ($entity->rotation->x) {
 				$model = \glm\rotate($model, $entity->rotation->x, new \glm\vec3(1.0, 0.0, 0.0));
