@@ -28,34 +28,34 @@ class PerspectiveCamera
      *
      * @var vec3
      */
-    protected $upVector;
+    public $upVector;
 
     /**
      * The up vector
      *
      * @var vec3
      */
-    protected $worldUpVector;
+    public $worldUpVector;
 
     /**
      * The front vector
      *
      * @var vec3
      */
-    protected $frontVector;
+    public $frontVector;
 
     /**
      * The right vector
      *
      * @var vec3
      */
-    protected $rightVector;
+    public $rightVector;
 
     /**
      * Euler angles 
      */
-    protected $pitch = 0.0;
-    protected $yaw = -90.0;
+    public $pitch = 0.0;
+    public $yaw = -90.0;
 
     /**
      * Current screen dimensions
@@ -63,7 +63,7 @@ class PerspectiveCamera
      * @var int
      */
     private $screenWidth = 800;
-    private $screenHeight = 800;
+    private $screenHeight = 600;
 
     /**
      * Construct
@@ -93,7 +93,7 @@ class PerspectiveCamera
      */
     public function updateProjection()
     {
-        $this->projectionMatrix = \glm\perspective(45.0, (float)$this->screenWidth / (float)$this->screenHeight, 0.1, 100.0);
+        $this->projectionMatrix = \glm\perspective(45.0, (float)$this->screenWidth / (float)$this->screenHeight, 0.1, 300.0);
     }
 
     /**
@@ -184,11 +184,8 @@ class PerspectiveCamera
         $front->x = cos(\glm\radians($this->yaw)) * cos(\glm\radians($this->pitch));
         $front->y = sin(\glm\radians($this->pitch));
         $front->z = sin(\glm\radians($this->yaw)) * cos(\glm\radians($this->pitch));
-        // $front->x = cos($this->yaw) * cos($this->pitch);
-        // $front->y = sin($this->pitch);
-        // $front->z = sin($this->yaw) * cos($this->pitch);
-        $this->frontVector = \glm\normalize($front);
 
+        $this->frontVector = \glm\normalize($front);
         $this->rightVector = \glm\normalize(\glm\cross($this->frontVector, $this->worldUpVector));
         $this->upVector = \glm\normalize(\glm\cross($this->rightVector, $this->frontVector));
     }
@@ -212,5 +209,6 @@ class PerspectiveCamera
         echo " Pitch: $this->pitch\n";
         echo " Yaw: $this->yaw\n";
         echo " postion: $this->position\n";
+        echo " front: $this->frontVector\n";
     }
 }

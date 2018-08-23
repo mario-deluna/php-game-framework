@@ -16,9 +16,7 @@ class Cube extends Entity
 	 */
 	public function __construct(vec3 $position, vec3 $scale, vec3 $rotation)
 	{
-		$this->position = $position;
-		$this->size = $scale;
-		$this->rotation = $rotation;
+		$this->initializeTransform($position, $scale, $rotation);
 
 		$this->mesh = 'cube';
 	}

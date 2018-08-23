@@ -5,10 +5,9 @@ namespace PGF\Drawing;
 use PGF\Exception;
 use PGF\Shader\Program;
 
-/**
- * Super simple mesh drawer
- */
-class SimpleMesh
+use glm\vec3;
+
+class LineDrawer
 {
     /**
      * The buffers
@@ -17,38 +16,31 @@ class SimpleMesh
      */
     protected $VAO;
     protected $VBO;
-
-    /**
-     * number of triangles to draw
-     *
-     * @var int
-     */
-    protected $triangleCount;
     
+    /**
+     * The shader used to draw 
+     *
+     * @param Program
+     */
+    protected $shader;
+
     /**
      * Construct
      *
      * @param Program           $shader 
      */
-    public function __construct(array $verticies)
+    public function __construct(Program $shader)
     {
-        $this->triangleCount = count($verticies) / 6;
+        $this->shader = $shader;
 
         glGenVertexArrays(1, $this->VAO);
         glGenBuffers(1, $this->VBO);
         
         glBindVertexArray($this->VAO);
         
-        // vertex buffer
-        glBindBuffer(GL_ARRAY_BUFFER, $this->VBO);
-        glBufferDataFloat(GL_ARRAY_BUFFER, $verticies, GL_STATIC_DRAW);
-        
         // position attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6, 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3, 0);
         glEnableVertexAttribArray(0);
-
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6, 3);
-        glEnableVertexAttribArray(1);
 
         // unbind
         glBindBuffer(GL_ARRAY_BUFFER, 0); 
@@ -67,9 +59,14 @@ class SimpleMesh
     /**
      * Draw the damn thing
      */ 
-    public function draw()
+    public function draw(vec3 $a, vec3 $b)
     {
+        $this->shader->use();
+
+        glBindBuffer(GL_ARRAY_BUFFER, $this->VBO);
+        glBufferDataFloat(GL_ARRAY_BUFFER, [$a->x, $a->y, $a->z, $b->x, $b->y, $b->z], GL_STATIC_DRAW);
+
         glBindVertexArray($this->VAO);
-        glDrawArrays(GL_TRIANGLE, 0, $this->triangleCount);
+        glDrawArrays(GL_LINE_STRIP, 0, 2);
     }
 }

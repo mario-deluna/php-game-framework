@@ -3,57 +3,26 @@
 namespace PGF\Entity\Traits;
 
 use glm\vec3;
+use PGF\Component\Transform3D as TransformComponent;
 
 trait Transform3D
 {	
 	/**
-	 * The position vector
+	 * Tranformation instance
 	 *
-	 * @var vec3
+	 * @var TransformComponent
 	 */
-	public $position;
+	public $transform;
 
 	/**
-	 * The size vector
+	 * Initialize the tranformation component
 	 *
-	 * @var vec3
+	 * @param vec3 				$position
+	 * @param vec3 				$size
+	 * @param vec3 				$rotation
 	 */
-	public $size;
-
-	/**
-	 * The rotation vector
-	 *
-	 * @var vec3
-	 */
-	public $rotation;
-
-	/**
-	 * Returns the position vector
-	 *
-	 * @return vec3
-	 */
-	public function getPosition() : vec3
+	public function initializeTransform(vec3 $position, vec3 $size, vec3 $rotation)
 	{
-		return $this->position;
-	}
-
-	/**
-	 * Returns the size vector
-	 *
-	 * @return vec3
-	 */
-	public function getSize() : vec3
-	{
-		return $this->size;
-	}
-
-	/**
-	 * Returns the rotation vector
-	 *
-	 * @return vec3
-	 */
-	public function getRotation() : vec3
-	{
-		return $this->rotation;
+		$this->transform = new TransformComponent($position, $size, $rotation);
 	}
 }
