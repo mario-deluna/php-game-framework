@@ -43,6 +43,14 @@ class Window
 	protected $options = [];
 
 	/**
+	 * Window dimensions
+	 *
+	 * @var int
+	 */
+	protected $width;
+	protected $height;
+
+	/**
 	 * Create a new window
 	 * This will initialize GLFW if not already 
 	 *
@@ -112,6 +120,9 @@ class Window
 	{
 		if ($this->context) throw new Exception('The window is already opend.');
 
+		$this->width = $width;
+		$this->height = $height;
+
 		foreach($this->options as $key => $option) {
 			glfwWindowHint($key, $option);
 		}
@@ -121,6 +132,26 @@ class Window
 		}
 
 		static::$contextCounter++;
+	}
+
+	/**
+	 * Returns the current windows width
+	 *
+	 * @return int
+	 */
+	public function getWidth() : int
+	{
+		return $this->width;
+	}
+
+	/**
+	 * Returns the current windows height
+	 *
+	 * @return int
+	 */
+	public function getHeight() : int
+	{
+		return $this->height;
 	}
 
 	/**

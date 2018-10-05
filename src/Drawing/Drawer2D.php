@@ -3,7 +3,10 @@
 namespace PGF\Drawing;
 
 use PGF\Exception;
-use PGF\Shader\Program;
+use PGF\Window;
+use PGF\Shader\{Program, Shader};
+
+use PGF\Texture\Texture;
 
 /**
  * Plain and simple 2D Texture drawer
@@ -27,22 +30,31 @@ class Drawer2D
      */
     protected $shader;
 
+    /** 
+     * The window needed to for dimensions
+     *
+     * @var Window
+     */
+    protected $window;
+
     /**
      * Construct
-     *
-     * @param Program           $shader 
      */
-    public function __construct(Program $shader)
+    public function __construct(Window $window)
     {
-        $this->shader = $shader;
+        // assign the window
+        $this->window = $window;
+
+        // create the drawer shader
+        $this->createDefaultShader();
 
         // now setup the buffers
         //---
         $verticies = [
-             0.5,  0.5, 0.0,
-             0.5, -0.5, 0.0,
-            -0.5, -0.5, 0.0,
-            -0.5,  0.5, 0.0,
+             1,  1, 0.0,
+             1,  0, 0.0,
+             0,  0, 0.0,
+             0,  1, 0.0,
         ];
 
         $indices = [
@@ -91,6 +103,75 @@ class Drawer2D
     }
 
     /**
+     * Create the defrault 2D draw shader
+     */
+    private function createDefaultShader()
+    {
+        /**
+         * Prepare Shaders
+         */
+        $vertexShader = new Shader(Shader::VERTEX, "
+        #version 330 core
+        layout (location = 0) in vec3 position;
+        layout (location = 1) in vec2 texture_coordinates;
+
+        out vec2 tcoords;
+
+        uniform mat4 projection;
+        uniform vec2 pos;
+        uniform vec2 size;
+
+        mat4 scale(float x, float y, float z){
+            return mat4(
+                vec4(x,   0.0, 0.0, 0.0),
+                vec4(0.0, y,   0.0, 0.0),
+                vec4(0.0, 0.0, z,   0.0),
+                vec4(0.0, 0.0, 0.0, 1.0)
+            );
+        }
+
+        mat4 translate(float x, float y, float z){
+            return mat4(
+                vec4(1.0, 0.0, 0.0, 0.0),
+                vec4(0.0, 1.0, 0.0, 0.0),
+                vec4(0.0, 0.0, 1.0, 0.0),
+                vec4(x,   y,   z,   1.0)
+            );
+        }
+
+        void main()
+        {
+            gl_Position = projection * translate(pos.x, pos.y, 0) * scale(size.x, size.y, 0) * vec4(position, 1.0f);
+            tcoords = texture_coordinates;
+        }
+        ");
+
+        $fragmentShader = new Shader(Shader::FRAGMENT, "
+        #version 330 core
+        out vec4 fragment_color;
+
+        in vec2 tcoords;
+
+        uniform sampler2D texture1;
+
+        void main()
+        {
+            fragment_color = texture(texture1, tcoords);
+            //fragment_color = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+        ");
+        $shader = new Program($vertexShader, $fragmentShader);
+        $shader->link();
+
+        // we created the shader program so we can free
+        // the sources
+        unset($vertexShader, $fragmentShader);
+
+        // assign the current shader
+        $this->shader = $shader;
+    }
+
+    /**
      * Cleanup 
      */
     public function __destruct()
@@ -104,20 +185,30 @@ class Drawer2D
     /**
      * Draw the damn thing
      */ 
-    public function draw()
+    public function draw(int $x, int $y, int $width, int $height, Texture $texture)
     {
+        // prepare the texture
+        glActiveTexture(GL_TEXTURE0);
+        $texture->bind();
+
         $this->shader->use();
 
-        $coords = [
-            1.0, 1.0, // top right
-            1.0, 0.0, // bottom right
-            0.0, 0.0, // bottom left
-            0.0, 1.0  // top left
-        ];
+        $windowWidth = $this->window->getWidth();
+        $windowHeight = $this->window->getHeight();
 
-        glBindBuffer(GL_ARRAY_BUFFER, $this->TCBO);
-        glBufferDataFloat(GL_ARRAY_BUFFER, $coords, GL_DYNAMIC_DRAW);
+        // set the projection matrix
+        $this->shader->uniformMatrix4fv('projection', [
+            2.0 / ($windowWidth - 0), 0, 0, 0,
+            0, 2.0 / (0 - $windowHeight), 0, 0,
+            0, 0, -2.0 / (-100 - 100), 0,
+            -($windowWidth + 0) / ($windowWidth - 0), -(0 + $windowHeight) / (0 - $windowHeight), -(-100 + 100) / (-100 - 100), 1
+        ]);
 
+        // set the position
+        $this->shader->uniform2f('pos', $x, $y);
+        $this->shader->uniform2f('size', $width, $height);
+
+        // draw
         glBindVertexArray($this->VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }

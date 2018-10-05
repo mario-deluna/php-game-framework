@@ -70,4 +70,27 @@ class Program
 	{
 		glUseProgram($this->id);
 	}
+
+	/**
+	 * Set matrix uniform
+	 *
+	 * @param string 			$key
+	 * @param array 			$matrix
+	 */
+	public function uniformMatrix4fv(string $key, array $matrix)
+	{
+		glUniformMatrix4fv(glGetUniformLocation($this->id, $key), 1, false, $matrix);
+	}
+
+	/**
+	 * Set 2f uniform
+	 *
+	 * @param string 			$key
+	 * @param float 			$x
+	 * @param float 			$y
+	 */
+	public function uniform2f(string $key, float $x, float $y)
+	{
+		glUniform2f(glGetUniformLocation($this->id, $key), $x, $y);
+	}
 }

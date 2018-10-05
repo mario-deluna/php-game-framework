@@ -24,7 +24,7 @@ $window->setHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 $window->setHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 // open it
-$window->open('Simple 3D Example');
+$window->open('PHP GLFW Triangle');
 
 // enable vsync
 $window->setSwapInterval(1);

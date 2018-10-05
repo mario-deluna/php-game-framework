@@ -15,7 +15,9 @@ use PGF\{
 	Shader\Shader,
 	Shader\Program,
 
-    Drawing\Drawer2D
+    Drawing\Drawer2D,
+
+    Texture\Texture
 };
 
 $window = new Window;
@@ -27,50 +29,20 @@ $window->setHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 $window->setHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 // open it
-$window->open('Simple 3D Example');
+$window->open('2D texture');
 
 // enable vsync
 $window->setSwapInterval(1);
 
 /**
- * Prepare Shaders
- */
-$vertexShader = new Shader(Shader::VERTEX, "
-#version 330 core
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec2 texture_coordinates;
-
-out vec2 tcoords;
-
-void main()
-{
-    gl_Position = vec4(position, 1.0f);
-    tcoords = texture_coordinates;
-}
-");
-
-$fragmentShader = new Shader(Shader::FRAGMENT, "
-#version 330 core
-out vec4 fragment_color;
-
-in vec2 tcoords;
-
-void main()
-{
-    fragment_color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-}
-");
-$shader = new Program($vertexShader, $fragmentShader);
-$shader->link();
-
-// we created the shader program so we can free
-// the sources
-unset($vertexShader, $fragmentShader);
-
-/**
  * Create drawer
  */
-$drawer = new Drawer2D($shader);
+$drawer = new Drawer2D($window);
+
+/**
+ * Create the texture
+ */
+$texture = new Texture(__DIR__ . '/images/test.png');
 
 /**
  * Main loop
@@ -80,7 +52,7 @@ while (!$window->shouldClose())
 	$window->clearColor(0, 0, 0, 1);
 	$window->clear(GL_COLOR_BUFFER_BIT);
 
-    $drawer->draw();
+    $drawer->draw(10, 10, 780, 580, $texture);
 
     // swap
     $window->swapBuffers();
