@@ -31,6 +31,9 @@ class Texture
 	 */
 	public function __construct(string $path)
 	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		glGenTextures(1, $this->id);
 		glBindTexture(GL_TEXTURE_2D, $this->id);
 
@@ -53,7 +56,7 @@ class Texture
 		} elseif ($this->nrChannels === 4) {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, $this->width, $this->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, $data);
 		} else {
-			throw new \Exception("Unknown number of color channels for texture: $path");
+			throw new \Exception("Unknown number of color channels ({$this->nrChannels}) for texture: $path");
 		}
 
 		// create mipmap
