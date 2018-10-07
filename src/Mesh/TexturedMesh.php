@@ -3,10 +3,8 @@
 namespace PGF\Mesh;
 
 use PGF\Exception;
-use PGF\Shader\Program;
-use PGF\Texture\Texture;
 
-class TexturedMesh
+class TexturedMesh implements MeshInterface
 {
     /**
      * The buffers
@@ -24,34 +22,19 @@ class TexturedMesh
     protected $triangleCount;
 
     /**
-     * The meshes shader
-     *
-     * @var Program
-     */
-    protected $shader;
-
-    /**
-     * The meshes texture
-     *
-     * @var Texture
-     */
-    protected $texture;
-
-    /**
      * Construct
      *
-     * @param Program           $shader 
-     * @param Texture           $texture
      * @param array[float]      $verticies
      */
-    public function __construct(Program $shader, Texture $texture, array $verticies)
+    public function __construct(array $verticies)
     {
-        // assign shader & texture
-        $this->shader = $shader;
-        $this->texture = $texture;
+        $numberOfVerticies = count($verticies);
+        if ($numberOfVerticies % 8 == 0) {
+            throw new Exception('Invalid number of verticies given for ' . get_class($this));
+        }
 
         // count the triangles
-        $this->triangleCount = count($verticies) / 8;
+        $this->triangleCount = $numberOfVerticies / 8;
 
         // generate the buffers.
         glGenVertexArrays(1, $this->VAO);
