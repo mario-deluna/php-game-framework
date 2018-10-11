@@ -27,7 +27,7 @@ $window->setHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 $window->setHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 // open it
-$window->open('2D texture');
+$window->open('3D Cube');
 
 // enable vsync
 $window->setSwapInterval(1);

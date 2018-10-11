@@ -1,31 +1,31 @@
 <?php  
 
-namespace PGF\Drawing;
+namespace PGF\Shaders;
 
 use PGF\Exception;
-use PGF\Window;
 use PGF\Shader\{Program, Shader};
 
 use PGF\Texture\Texture;
 
+use glm\mat4;
+use glm\vec3;
+
 /**
  * Simple basic 3D drawer
  */
-class Drawer3D
+class Simple3DShader extends Program
 {
+    /**
+     * Current shader
+     * 
+     * @var Program
+     */
+    public $shader;
+
     /**
      * Construct
      */
-    public function __construct()
-    {
-        // create the drawer shader
-        $this->createDefaultShader();
-    }
-
-    /**
-     * Create the defrault 2D draw shader
-     */
-    private function createDefaultShader()
+    public function __construct(...$shaders)
     {
         /**
          * Prepare Shaders
@@ -98,56 +98,45 @@ class Drawer3D
             fragment_color = vec4(result, 1.0);
         } 
         ");
-        $shader = new Program($vertexShader, $fragmentShader);
-        $shader->link();
+
+        parent::__construct($vertexShader, $fragmentShader);
+        $this->link();
 
         // we created the shader program so we can free
         // the sources
         unset($vertexShader, $fragmentShader);
-
-        // assign the current shader
-        $this->shader = $shader;
     }
 
     /**
-     * Cleanup 
+     * Update the view matrix 
      */
-    public function __destruct()
+    public function setViewMatrx(mat4 $matrix)
     {
-        glDeleteVertexArrays(1, $this->VAO);
-        glDeleteBuffers(1, $this->VBO);
-        glDeleteBuffers(1, $this->EBO);
-        glDeleteBuffers(1, $this->TCBO);
+        $this->uniformMatrix4fv('view', $matrix);
     }
 
     /**
-     * Draw the damn thing
-     */ 
-    public function draw(int $x, int $y, int $width, int $height, Texture $texture)
+     * Update the projection matrix 
+     */
+    public function setProjectionMatrx(mat4 $matrix)
     {
-        // prepare the texture
+        $this->uniformMatrix4fv('projection', $matrix);
+    }
+
+    /**
+     * Update the transformation matrix 
+     */
+    public function setTransformationMatrix(mat4 $matrix)
+    {
+        $this->uniformMatrix4fv('transform', $matrix);
+    }
+
+    /**
+     * Set the texture
+     */
+    public function setTexture(Texture $texture)
+    {
         glActiveTexture(GL_TEXTURE0);
         $texture->bind();
-
-        $this->shader->use();
-
-        $windowWidth = $this->window->getWidth();
-        $windowHeight = $this->window->getHeight();
-
-        // set the projection matrix
-        $this->shader->uniformMatrix4fv('projection', [
-            2.0 / ($windowWidth - 0), 0, 0, 0,
-            0, 2.0 / (0 - $windowHeight), 0, 0,
-            0, 0, -2.0 / (-100 - 100), 0,
-            -($windowWidth + 0) / ($windowWidth - 0), -(0 + $windowHeight) / (0 - $windowHeight), -(-100 + 100) / (-100 - 100), 1
-        ]);
-
-        // set the position
-        $this->shader->uniform2f('pos', $x, $y);
-        $this->shader->uniform2f('size', $width, $height);
-
-        // draw
-        glBindVertexArray($this->VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 }
