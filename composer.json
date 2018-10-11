@@ -7,7 +7,7 @@
         }
     ],
     "require": {
-        "ponup/glm": "^1.0"
+        "mario-deluna/glm": "dev-master"
     },
     "autoload": {
         "psr-4": {

@@ -9,13 +9,16 @@ if (!defined('DS')) { define('DS', DIRECTORY_SEPARATOR); }
  */
 require __DIR__ . DS . '..' . DS . 'vendor' . DS . 'autoload.php';
 
+use glm\vec3;
+
 use PGF\{
 	Window, 
+    Texture\Texture,
+    Mesh\MeshManager,
+    Shaders\Simple3DShader,
+    Camera\PerspectiveCamera,
 
-	Shader\Shader,
-	Shader\Program,
-    
-    Texture\Texture
+    Component\Transform3D
 };
 
 $window = new Window;
@@ -33,14 +36,33 @@ $window->open('3D Cube');
 $window->setSwapInterval(1);
 
 /**
- * Create drawer
+ * Create a camera
  */
-$drawer = new Drawer2D($window);
+$camera = new PerspectiveCamera(new vec3(0.0, 0.0, -1.0));
 
 /**
- * Create the texture
+ * Create basic 3D Shader
  */
-$texture = new Texture(__DIR__ . '/images/test.png');
+$shader = new Simple3DShader();
+$shader->use();
+$shader->setProjectionMatrx(\glm\value_ptr($camera->getProjectionMatrx()));
+$shader->setViewMatrx(\glm\value_ptr($camera->getViewMatrix()));
+
+/**
+ * Get a cube
+ */
+$cube = (new MeshManager)->get('primitives.cube');
+
+/**
+ * create a transform 
+ */
+$transform = new Transform3D(
+	new vec3(0.0, 0.0, 0.0),
+	new vec3(1.0, 1.0, 1.0),
+	new vec3(0.0, 0.0, 0.0)
+);
+
+
 
 /**
  * Main loop
@@ -50,7 +72,11 @@ while (!$window->shouldClose())
 	$window->clearColor(0, 0, 0, 1);
 	$window->clear(GL_COLOR_BUFFER_BIT);
 
-    $drawer->draw(10, 10, 780, 580, $texture);
+	// set the transformation matrix
+	$shader->setTransformationMatrix($transform->getMatrix());
+
+	// draw the cube
+   	$cube->draw();
 
     // swap
     $window->swapBuffers();

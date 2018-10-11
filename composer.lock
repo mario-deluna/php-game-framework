@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "6bf4e0a069a9b9f35172a1d5eda89266",
+    "content-hash": "c1d06013ed00dcf97cbbc832724d2faf",
     "packages": [
         {
-            "name": "ponup/glm",
-            "version": "1.0.2",
+            "name": "mario-deluna/glm",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Ponup/glm.git",
-                "reference": "055e15ac9c2b5b4b99d92092d1137ee4cf74f89a"
+                "url": "https://github.com/mario-deluna/glm.git",
+                "reference": "d8871b2a2bb404a3ec4d631782dd6847a9519586"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ponup/glm/zipball/055e15ac9c2b5b4b99d92092d1137ee4cf74f89a",
-                "reference": "055e15ac9c2b5b4b99d92092d1137ee4cf74f89a",
+                "url": "https://api.github.com/repos/mario-deluna/glm/zipball/d8871b2a2bb404a3ec4d631782dd6847a9519586",
+                "reference": "d8871b2a2bb404a3ec4d631782dd6847a9519586",
                 "shasum": ""
             },
             "require-dev": {
@@ -43,13 +43,15 @@
                 }
             ],
             "description": "A port of the OpenGL Mathematics library (GLM) to PHP",
-            "time": "2018-01-18T21:35:33+00:00"
+            "time": "2018-10-11 19:24:06"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "mario-deluna/glm": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],

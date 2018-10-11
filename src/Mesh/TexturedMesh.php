@@ -29,8 +29,8 @@ class TexturedMesh implements MeshInterface
     public function __construct(array $verticies)
     {
         $numberOfVerticies = count($verticies);
-        if ($numberOfVerticies % 8 == 0) {
-            throw new Exception('Invalid number of verticies given for ' . get_class($this));
+        if ($numberOfVerticies % 8 !== 0) {
+            throw new Exception('Invalid number of verticies ('.$numberOfVerticies.') given for ' . get_class($this));
         }
 
         // count the triangles

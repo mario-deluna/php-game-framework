@@ -110,7 +110,7 @@ class Simple3DShader extends Program
     /**
      * Update the view matrix 
      */
-    public function setViewMatrx(mat4 $matrix)
+    public function setViewMatrx(array $matrix)
     {
         $this->uniformMatrix4fv('view', $matrix);
     }
@@ -118,7 +118,7 @@ class Simple3DShader extends Program
     /**
      * Update the projection matrix 
      */
-    public function setProjectionMatrx(mat4 $matrix)
+    public function setProjectionMatrx(array $matrix)
     {
         $this->uniformMatrix4fv('projection', $matrix);
     }
@@ -126,7 +126,7 @@ class Simple3DShader extends Program
     /**
      * Update the transformation matrix 
      */
-    public function setTransformationMatrix(mat4 $matrix)
+    public function setTransformationMatrix(array $matrix)
     {
         $this->uniformMatrix4fv('transform', $matrix);
     }
