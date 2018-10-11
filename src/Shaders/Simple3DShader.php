@@ -74,8 +74,8 @@ class Simple3DShader extends Program
         {
             vec4 textcol = texture(texture1, tCoords);
             vec3 lightColor = vec3(1.0, 1.0, 0.9);
-            vec3 objectColor = vec3(0.2, 0.2, 0.2);
-            //vec3 objectColor = vec3(0.8, 0.8, 0.8);// * vec3(textcol.x, textcol.y, textcol.z);
+            //vec3 objectColor = vec3(0.2, 0.2, 0.2);
+            vec3 objectColor = vec3(textcol.x, textcol.y, textcol.z);
             
             // ambient
             float ambientStrength = 0.6;

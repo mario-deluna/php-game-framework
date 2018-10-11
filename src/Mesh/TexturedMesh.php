@@ -34,7 +34,7 @@ class TexturedMesh implements MeshInterface
         }
 
         // count the triangles
-        $this->triangleCount = $numberOfVerticies / 8;
+        $this->triangleCount = $numberOfVerticies;
 
         // generate the buffers.
         glGenVertexArrays(1, $this->VAO);

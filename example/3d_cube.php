@@ -38,7 +38,7 @@ $window->setSwapInterval(1);
 /**
  * Create a camera
  */
-$camera = new PerspectiveCamera(new vec3(0.0, 0.0, -1.0));
+$camera = new PerspectiveCamera(new vec3(0.0, 0.0, 5.0));
 
 /**
  * Create basic 3D Shader
@@ -62,7 +62,11 @@ $transform = new Transform3D(
 	new vec3(0.0, 0.0, 0.0)
 );
 
+// enable deph test
+glEnable(GL_DEPTH_TEST);
 
+// load the test texture
+$texture = new Texture(__DIR__ . '/images/test.png');
 
 /**
  * Main loop
@@ -70,10 +74,15 @@ $transform = new Transform3D(
 while (!$window->shouldClose())
 {
 	$window->clearColor(0, 0, 0, 1);
-	$window->clear(GL_COLOR_BUFFER_BIT);
+	$window->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// set the transformation matrix
+    $transform->rotation->y += 0.8;
+    $transform->rotation->x += 0.9;
+    $transform->__transformDirty = true; 
 	$shader->setTransformationMatrix($transform->getMatrix());
+
+    $shader->setTexture($texture);
 
 	// draw the cube
    	$cube->draw();
