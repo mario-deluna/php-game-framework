@@ -93,4 +93,17 @@ class Program
 	{
 		glUniform2f(glGetUniformLocation($this->id, $key), $x, $y);
 	}
+
+	/**
+	 * Set 2f uniform
+	 *
+	 * @param string 			$key
+	 * @param float 			$x
+	 * @param float 			$y
+	 * @param float 			$z
+	 */
+	public function uniform3f(string $key, float $x, float $y, float $z)
+	{
+		glUniform3f(glGetUniformLocation($this->id, $key), $x, $y, $z);
+	}
 }

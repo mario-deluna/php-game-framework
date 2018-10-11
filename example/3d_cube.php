@@ -47,6 +47,7 @@ $shader = new Simple3DShader();
 $shader->use();
 $shader->setProjectionMatrx(\glm\value_ptr($camera->getProjectionMatrx()));
 $shader->setViewMatrx(\glm\value_ptr($camera->getViewMatrix()));
+$shader->setLightPosition(\glm\vec3(10, 10, 10));
 
 /**
  * Get a cube

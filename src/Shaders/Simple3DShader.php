@@ -33,27 +33,32 @@ class Simple3DShader extends Program
         $vertexShader = new Shader(Shader::VERTEX, "
         #version 330 core
         layout (location = 0) in vec3 position;
-        layout (location = 1) in vec3 normalv;
-        layout (location = 2) in vec2 text_coords;
+        layout (location = 1) in vec3 normal_vector;
+        layout (location = 2) in vec2 textrure_coords;
 
         uniform mat4 projection;
         uniform mat4 transform;
         uniform mat4 view;
 
-        out vec3 FragPos;
-        out vec3 FragNormals;
-        out vec2 tCoords;
-        out vec3 LightPos;
+        uniform vec3 light_position;
+
+        out vec3 fragment_position;
+        out vec3 fragment_normals;
+        out vec2 fragment_coords;
+
+        out vec3 fragment_light_position;
 
         void main()
         {
             vec3 lightPos = vec3(10, 10, 10);
 
             gl_Position = projection * view * transform * vec4(position, 1.0);
-            FragPos = vec3(view * transform * vec4(position, 1.0));
-            FragNormals = mat3(transpose(inverse(view * transform))) * normalv;
-            LightPos = vec3(view * vec4(lightPos, 1.0));
-            tCoords = text_coords;
+
+            fragment_position = vec3(view * transform * vec4(position, 1.0));
+            fragment_normals = mat3(transpose(inverse(view * transform))) * normal_vector;
+            fragment_coords = textrure_coords;
+
+            fragment_light_position = vec3(view * vec4(light_position, 1.0));
         }
         ");
 
@@ -62,19 +67,18 @@ class Simple3DShader extends Program
 
         out vec4 fragment_color;
 
-        in vec3 FragPos;  
-        in vec3 FragNormals;
-        in vec2 tCoords;
-        in vec3 LightPos;
+        in vec3 fragment_position;  
+        in vec3 fragment_normals;
+        in vec2 fragment_coords;
+        in vec3 fragment_light_position;
 
         uniform sampler2D texture1;
         uniform float time;
           
         void main()
         {
-            vec4 textcol = texture(texture1, tCoords);
+            vec4 textcol = texture(texture1, fragment_coords);
             vec3 lightColor = vec3(1.0, 1.0, 0.9);
-            //vec3 objectColor = vec3(0.2, 0.2, 0.2);
             vec3 objectColor = vec3(textcol.x, textcol.y, textcol.z);
             
             // ambient
@@ -82,14 +86,14 @@ class Simple3DShader extends Program
             vec3 ambient = ambientStrength * lightColor;    
             
              // diffuse 
-            vec3 norm = normalize(FragNormals);
-            vec3 lightDir = normalize(LightPos - FragPos);
+            vec3 norm = normalize(fragment_normals);
+            vec3 lightDir = normalize(fragment_light_position - fragment_position);
             float diff = max(dot(norm, lightDir), 0.0);
             vec3 diffuse = diff * lightColor;
             
             // specular
             float specularStrength = 0.9;
-            vec3 viewDir = normalize(-FragPos); // the viewer is always at (0,0,0) in view-space, so viewDir is (0,0,0) - Position => -Position
+            vec3 viewDir = normalize(-fragment_position); // the viewer is always at (0,0,0) in view-space, so viewDir is (0,0,0) - Position => -Position
             vec3 reflectDir = reflect(-lightDir, norm);  
             float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
             vec3 specular = specularStrength * spec * lightColor; 
@@ -105,6 +109,14 @@ class Simple3DShader extends Program
         // we created the shader program so we can free
         // the sources
         unset($vertexShader, $fragmentShader);
+    }
+
+    /**
+     * Set the light position
+     */
+    public function setLightPosition(vec3 $position)
+    {
+        $this->uniform3f('light_position', $position->x, $position->y, $position->z);
     }
 
     /**
