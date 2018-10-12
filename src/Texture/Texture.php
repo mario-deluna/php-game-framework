@@ -55,6 +55,8 @@ class Texture
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, $this->width, $this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, $data);
 		} elseif ($this->nrChannels === 4) {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, $this->width, $this->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, $data);
+		} elseif ($this->nrChannels === 1) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, $this->width, $this->height, 0, GL_RED, GL_UNSIGNED_BYTE, $data);
 		} else {
 			throw new \Exception("Unknown number of color channels ({$this->nrChannels}) for texture: $path");
 		}

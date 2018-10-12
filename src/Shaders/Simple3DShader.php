@@ -26,9 +26,11 @@ class Simple3DShader extends Program
      * Construct
      */
     public function __construct(...$shaders)
-    {
+    {  
         /**
          * Prepare Shaders
+         *
+         * Big thanks to learnopengl.org
          */
         $vertexShader = new Shader(Shader::VERTEX, "
         #version 330 core
@@ -50,13 +52,11 @@ class Simple3DShader extends Program
 
         void main()
         {
-            vec3 lightPos = vec3(10, 10, 10);
-
-            gl_Position = projection * view * transform * vec4(position, 1.0);
-
             fragment_position = vec3(view * transform * vec4(position, 1.0));
             fragment_normals = mat3(transpose(inverse(view * transform))) * normal_vector;
             fragment_coords = textrure_coords;
+
+            gl_Position = projection * view * transform * vec4(position, 1.0);
 
             fragment_light_position = vec3(view * vec4(light_position, 1.0));
         }
@@ -72,33 +72,38 @@ class Simple3DShader extends Program
         in vec2 fragment_coords;
         in vec3 fragment_light_position;
 
-        uniform sampler2D texture1;
-        uniform float time;
+        uniform sampler2D diffuse_map;
+        uniform sampler2D specular_map;
+
+        uniform vec3 view_position;
+
+        uniform float shininess;
+        uniform float specular_strength;
           
         void main()
         {
-            vec4 textcol = texture(texture1, fragment_coords);
-            vec3 lightColor = vec3(1.0, 1.0, 0.9);
-            vec3 objectColor = vec3(textcol.x, textcol.y, textcol.z);
-            
+            vec3 light_ambient = vec3(1.0f, 1.0f, 1.0f) * 0.2;
+            vec3 light_diffuse = vec3(1.0f, 1.0f, 1.0f) * 0.8;
+            vec3 light_specular = vec3(1.0f, 1.0f, 1.0f) * specular_strength;
+
             // ambient
-            float ambientStrength = 0.6;
-            vec3 ambient = ambientStrength * lightColor;    
+            vec3 ambient = light_ambient * texture(diffuse_map, fragment_coords).rgb;
             
-             // diffuse 
+            // diffuse 
             vec3 norm = normalize(fragment_normals);
             vec3 lightDir = normalize(fragment_light_position - fragment_position);
             float diff = max(dot(norm, lightDir), 0.0);
-            vec3 diffuse = diff * lightColor;
+            vec3 diffuse = light_diffuse * diff * texture(diffuse_map, fragment_coords).rgb;  
             
             // specular
-            float specularStrength = 0.9;
-            vec3 viewDir = normalize(-fragment_position); // the viewer is always at (0,0,0) in view-space, so viewDir is (0,0,0) - Position => -Position
+            vec3 viewDir = normalize(view_position - fragment_position);
             vec3 reflectDir = reflect(-lightDir, norm);  
-            float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-            vec3 specular = specularStrength * spec * lightColor; 
-            
-            vec3 result = (ambient + diffuse + specular) * objectColor;
+            float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+            vec3 specular = light_specular * spec * texture(specular_map, fragment_coords).rgb;  
+                
+            // add everything together
+            vec3 result = ambient + diffuse + specular;
+
             fragment_color = vec4(result, 1.0);
         } 
         ");
@@ -128,6 +133,14 @@ class Simple3DShader extends Program
     }
 
     /**
+     * Set the view position
+     */
+    public function setViewPosition(vec3 $position)
+    {
+        $this->uniform3f('view_position', $position->x, $position->y, $position->z);
+    }
+
+    /**
      * Update the projection matrix 
      */
     public function setProjectionMatrx(array $matrix)
@@ -146,9 +159,19 @@ class Simple3DShader extends Program
     /**
      * Set the texture
      */
-    public function setTexture(Texture $texture)
+    public function setTexture(Texture $texture, ?Texture $specular = null)
     {
+        $this->uniform1i('diffuse_map', 0);
+        $this->uniform1i('specular_map', 1);
+
         glActiveTexture(GL_TEXTURE0);
         $texture->bind();
+
+        glActiveTexture(GL_TEXTURE1);
+        if ($specular) {
+            $specular->bind();
+        } else {
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
     }
 }
