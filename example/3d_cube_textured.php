@@ -47,7 +47,8 @@ $shader = new Simple3DShader();
 $shader->use();
 $shader->setProjectionMatrx(\glm\value_ptr($camera->getProjectionMatrx()));
 $shader->setViewMatrx(\glm\value_ptr($camera->getViewMatrix()));
-$shader->setLightPosition(\glm\vec3(50, 50, 50));
+$shader->setViewPosition($camera->position);
+$shader->setLightPosition(\glm\vec3(20, 1, 50));
 
 /**
  * Get a cube
@@ -88,9 +89,11 @@ while (!$window->shouldClose())
 	$window->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// set the transformation matrix
-    $transform1->rotation->y += 0.8;
-    $transform1->rotation->x += 0.9;
-    $transform1->__transformDirty = true; 
+    if ($window->getKeyState(GLFW_KEY_SPACE) !== GLFW_PRESS) {
+        $transform1->rotation->y += 0.8;
+        $transform1->rotation->x += 0.9;
+        $transform1->__transformDirty = true; 
+    }
 	$shader->setTransformationMatrix($transform1->getMatrix());
 
     if ($window->getKeyState(GLFW_KEY_S) === GLFW_PRESS) {
@@ -99,16 +102,35 @@ while (!$window->shouldClose())
         $shader->setTexture($texture1, $texture1_specular);
     }
 
-    $shader->uniform1f('shininess', 10);
+    // set rendering mode
+    if ($window->getKeyState(GLFW_KEY_1) === GLFW_PRESS) {
+        $shader->uniform1i('mode', 3);
+    } elseif ($window->getKeyState(GLFW_KEY_2) === GLFW_PRESS) {
+        $shader->uniform1i('mode', 1);
+    } elseif ($window->getKeyState(GLFW_KEY_3) === GLFW_PRESS) {
+        $shader->uniform1i('mode', 0);
+    } elseif ($window->getKeyState(GLFW_KEY_4) === GLFW_PRESS) {
+        $shader->uniform1i('mode', 2);
+    }
+
+    if ($window->getKeyState(GLFW_KEY_F) === GLFW_PRESS) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    } else {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    $shader->uniform1f('shininess', 5);
     $shader->uniform1f('specular_strength', 0.4);
 
 	// draw the cube 1
    	$cube->draw();
 
     // set the transformation matrix
-    $transform2->rotation->y -= 0.8;
-    $transform2->rotation->x -= 0.9;
-    $transform2->__transformDirty = true; 
+    if ($window->getKeyState(GLFW_KEY_SPACE) !== GLFW_PRESS) {
+        $transform2->rotation->y -= 0.8;
+        $transform2->rotation->x -= 0.9;
+        $transform2->__transformDirty = true; 
+    }
     $shader->setTransformationMatrix($transform2->getMatrix());
 
     if ($window->getKeyState(GLFW_KEY_S) === GLFW_PRESS) {

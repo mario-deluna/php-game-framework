@@ -79,8 +79,10 @@ class Simple3DShader extends Program
 
         uniform float shininess;
         uniform float specular_strength;
-          
-        void main()
+
+        uniform int mode = 0;
+
+        void draw_full()
         {
             vec3 light_ambient = vec3(1.0f, 1.0f, 1.0f) * 0.2;
             vec3 light_diffuse = vec3(1.0f, 1.0f, 1.0f) * 0.8;
@@ -105,6 +107,34 @@ class Simple3DShader extends Program
             vec3 result = ambient + diffuse + specular;
 
             fragment_color = vec4(result, 1.0);
+        }
+
+        void draw_diffuse()
+        {
+            fragment_color = texture(diffuse_map, fragment_coords);
+        }
+
+        void draw_specular()
+        {
+            fragment_color = texture(specular_map, fragment_coords);
+        }
+
+        void draw_color()
+        {
+            fragment_color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+
+        void main()
+        {
+            if (mode == 0) {
+                draw_full();
+            } else if (mode == 1) {
+                draw_diffuse();
+            } else if (mode == 2) {
+                draw_specular();
+            } else if (mode == 3) {
+                draw_color();
+            }
         } 
         ");
 

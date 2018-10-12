@@ -22,6 +22,11 @@ class TexturedMesh implements MeshInterface
     protected $triangleCount;
 
     /**
+     * Set the drawing mode
+     */
+    public $drawingMode = GL_TRIANGLES;
+
+    /**
      * Construct
      *
      * @param array[float]      $verticies
@@ -34,7 +39,7 @@ class TexturedMesh implements MeshInterface
         }
 
         // count the triangles
-        $this->triangleCount = $numberOfVerticies;
+        $this->triangleCount = $numberOfVerticies / 3;
 
         // generate the buffers.
         glGenVertexArrays(1, $this->VAO);
@@ -78,6 +83,6 @@ class TexturedMesh implements MeshInterface
     public function draw()
     {
         glBindVertexArray($this->VAO);
-        glDrawArrays(GL_TRIANGLES, 0, $this->triangleCount);
+        glDrawArrays($this->drawingMode, 0, $this->triangleCount);
     }
 }
