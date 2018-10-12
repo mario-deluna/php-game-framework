@@ -72,13 +72,17 @@ class Simple3DShader extends Program
         in vec2 fragment_coords;
         in vec3 fragment_light_position;
 
+        uniform int has_diffuse_texture = 1;
+        uniform int has_specular_texture = 1;
         uniform sampler2D diffuse_map;
         uniform sampler2D specular_map;
+        uniform vec3 diffuse_color = vec3(1.0f, 1.0f, 1.0f);
+        uniform vec3 specular_color = vec3(1.0f, 1.0f, 1.0f);
 
         uniform vec3 view_position;
 
-        uniform float shininess;
-        uniform float specular_strength;
+        uniform float shininess = 32.0f;
+        uniform float specular_strength = 1.0f;
 
         uniform int mode = 0;
 
@@ -88,20 +92,34 @@ class Simple3DShader extends Program
             vec3 light_diffuse = vec3(1.0f, 1.0f, 1.0f) * 0.8;
             vec3 light_specular = vec3(1.0f, 1.0f, 1.0f) * specular_strength;
 
+            vec3 diffuse_sample;
+            if (has_diffuse_texture == 1) {
+                diffuse_sample = texture(diffuse_map, fragment_coords).rgb;
+            } else {
+                diffuse_sample = diffuse_color;
+            }
+
+            vec3 specular_sample;
+            if (has_specular_texture == 1) {
+                specular_sample = texture(specular_map, fragment_coords).rgb;
+            } else {
+                specular_sample = specular_color;
+            }
+
             // ambient
-            vec3 ambient = light_ambient * texture(diffuse_map, fragment_coords).rgb;
+            vec3 ambient = light_ambient * diffuse_sample;
             
             // diffuse 
             vec3 norm = normalize(fragment_normals);
             vec3 lightDir = normalize(fragment_light_position - fragment_position);
             float diff = max(dot(norm, lightDir), 0.0);
-            vec3 diffuse = light_diffuse * diff * texture(diffuse_map, fragment_coords).rgb;  
+            vec3 diffuse = light_diffuse * diff * diffuse_sample;  
             
             // specular
             vec3 viewDir = normalize(view_position - fragment_position);
             vec3 reflectDir = reflect(-lightDir, norm);  
             float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-            vec3 specular = light_specular * spec * texture(specular_map, fragment_coords).rgb;  
+            vec3 specular = light_specular * spec * specular_sample;  
                 
             // add everything together
             vec3 result = ambient + diffuse + specular;
