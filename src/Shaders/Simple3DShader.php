@@ -54,7 +54,7 @@ class Simple3DShader extends Program
         {
             fragment_position = vec3(view * transform * vec4(position, 1.0));
             fragment_normals = mat3(transpose(inverse(view * transform))) * normal_vector;
-            fragment_coords = textrure_coords;
+            fragment_coords = vec2(textrure_coords.x, -textrure_coords.y);
 
             gl_Position = projection * view * transform * vec4(position, 1.0);
 
