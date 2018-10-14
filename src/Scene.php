@@ -31,6 +31,16 @@ class Scene
 	}
 
 	/**
+	 * Get the entity registry
+	 *
+	 * @return Registry
+	 */
+	public function getRegistry() : Registry
+	{
+		return $this->entities;
+	}
+
+	/**
 	 * Add a system
 	 *
 	 * @param System 			$system

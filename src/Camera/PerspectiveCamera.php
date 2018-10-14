@@ -68,11 +68,11 @@ class PerspectiveCamera
     /**
      * Construct
      */
-    public function __construct(vec3 $position)
+    public function __construct(?vec3 $position = null)
     {
         $this->updateProjection();
 
-        $this->position = $position;
+        $this->position = $position ?? new vec3(0.0, 0.0, 0.0);
         $this->worldUpVector = new vec3(0.0, 1.0, 0.0);
         $this->frontVector = new vec3(0.0, 0.0, -1.0);
 
