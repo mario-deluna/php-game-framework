@@ -51,6 +51,17 @@ class Manager
 	}
 
 	/**
+	 * Set a shader manually
+	 *
+	 * @param string 				$name
+	 * @param Program 				$shader
+	 */
+	public function set(string $name, Program $shader)
+	{
+		$this->programs[$name] = $shader;
+	}
+
+	/**
 	 * Get a shader program by name
 	 *
 	 * @param string 			$name

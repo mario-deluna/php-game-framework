@@ -16,13 +16,6 @@ use glm\vec3;
 class Simple3DShader extends Program
 {
     /**
-     * Current shader
-     * 
-     * @var Program
-     */
-    public $shader;
-
-    /**
      * Construct
      */
     public function __construct(...$shaders)
