@@ -36,6 +36,7 @@ class Simple3DShader extends Program
         uniform mat4 view;
 
         uniform vec3 light_position;
+        uniform vec2 texture_scale = vec2(1.0f, 1.0f);
 
         out vec3 fragment_position;
         out vec3 fragment_normals;
@@ -47,7 +48,7 @@ class Simple3DShader extends Program
         {
             fragment_position = vec3(view * transform * vec4(position, 1.0));
             fragment_normals = mat3(transpose(inverse(view * transform))) * normal_vector;
-            fragment_coords = vec2(textrure_coords.x, -textrure_coords.y);
+            fragment_coords = vec2(textrure_coords.x, -textrure_coords.y) * texture_scale;
 
             gl_Position = projection * view * transform * vec4(position, 1.0);
 
@@ -214,5 +215,14 @@ class Simple3DShader extends Program
         } else {
             glBindTexture(GL_TEXTURE_2D, 0);
         }
+    }
+
+    /**
+     * Sets the texture scale
+     *
+     */
+    public function setTextureScale(float $x, float $y)
+    {
+        $this->uniform2f('texture_scale', $x, $y);
     }
 }

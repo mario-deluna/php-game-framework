@@ -93,7 +93,7 @@ class PerspectiveCamera
      */
     public function updateProjection()
     {
-        $this->projectionMatrix = \glm\perspective(45.0, (float)$this->screenWidth / (float)$this->screenHeight, 0.1, 300.0);
+        $this->projectionMatrix = \glm\perspective(45.0, (float)$this->screenWidth / (float)$this->screenHeight, 0.1, 2000.0);
     }
 
     /**

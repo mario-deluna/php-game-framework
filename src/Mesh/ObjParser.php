@@ -32,7 +32,7 @@ class ObjParser
 
 			// get the type
 			$type = substr($line, 0, $p);
-			$data = substr($line, $p + 1);
+			$data = trim(substr($line, $p + 1));
 
 			// vertices
 			if ($type === 'v')
@@ -76,9 +76,8 @@ class ObjParser
 				}
 
 				// add the texture coords
-				foreach($uvs[$ui - 1] as $c)
-				{
-					$data[] = $c;
+				for($a = 0; $a<2; $a++) {
+					$data[] = $uvs[$ui - 1][$a];
 				}
 			}
 		}
