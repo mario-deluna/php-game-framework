@@ -67,6 +67,9 @@ class Texture
 		// lets hope $data is released here
 	}
 
+	public function getWidth() : int { return $this->width; }
+	public function getHeight() : int { return $this->height; }
+
 	/**
 	 * Bind the current texture
 	 */
