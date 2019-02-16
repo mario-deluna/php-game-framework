@@ -10,7 +10,8 @@ if (!defined('DS')) { define('DS', DIRECTORY_SEPARATOR); }
 require __DIR__ . DS . '..' . DS . 'vendor' . DS . 'autoload.php';
 
 use PGF\{
-	Window, 
+	Window,
+    Common\FrameLimiter,
 
 	Shader\Shader,
 	Shader\Program,
@@ -33,6 +34,9 @@ $window->open('2D Ball');
 
 // enable vsync
 $window->setSwapInterval(1);
+
+// create frame limiter
+$fl = new FrameLimiter();
 
 /**
  * Create drawer
@@ -57,7 +61,10 @@ $boostAt = 300;
  * Main loop
  */
 while (!$window->shouldClose())
-{
+{   
+    $fl->start();
+
+    $window->pollEvents();
 	$window->clearColor(0, 0, 0, 1);
 	$window->clear(GL_COLOR_BUFFER_BIT);
 
@@ -94,6 +101,7 @@ while (!$window->shouldClose())
 
     // swap
     $window->swapBuffers();
-    $window->pollEvents();
+
+    $fl->wait();
 }
 
