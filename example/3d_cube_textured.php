@@ -13,6 +13,7 @@ use glm\vec3;
 
 use PGF\{
 	Window, 
+    Common\FrameLimiter,
     Texture\Texture,
     Mesh\MeshManager,
     Shaders\Simple3DShader,
@@ -34,6 +35,9 @@ $window->open('3D Cube');
 
 // enable vsync
 $window->setSwapInterval(1);
+
+// create frame limiter
+$fl = new FrameLimiter();
 
 /**
  * Create a camera
@@ -85,6 +89,7 @@ $texture2_specular = new Texture(__DIR__ . '/images/planks_spec.jpg');
  */
 while (!$window->shouldClose())
 {
+    $fl->start();
 	$window->clearColor(0, 0, 0, 1);
 	$window->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -148,5 +153,7 @@ while (!$window->shouldClose())
     // swap
     $window->swapBuffers();
     $window->pollEvents();
+
+    $fl->wait();
 }
 
