@@ -1,5 +1,11 @@
 # PHP Game Framework
 
+> **VISU**
+>
+> Please checkout [VISU](https://github.com/phpgl/visu), which is the evolution of the PHP game framework.
+>
+> https://github.com/phpgl/visu
+
 A collection of helpers and wrappers around PHP-GLFW to build simple games and graphical applications 2D and 3D in PHP.
 
 ## Examples
